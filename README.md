@@ -32,7 +32,7 @@ Obtener el código
 -----------------
 Probablemente tengas que instalar git: `sudo apt-get install git`
 
-Luego debes obtener el código de LibreQDA: `git clone https://github.com/tryolabs/libreQDA.git`.
+Luego debes obtener el código de LibreQDA: `git clone https://github.com/libreqda/libreQDA.git`.
 
 
 Dependencias
@@ -41,7 +41,7 @@ Antes de poder comenzar es necesario instalar algunas dependencias.
 
 1. Instalar `build-essential`: `sudo apt-get install build-essential`.
 2. Instalar MySQL: `sudo apt-get install mysql-server libmysqlclient-dev libevent-dev libxml2-dev libxslt1-dev`.
-3. El archivo `requirements.txt` contiene una lista de dependencias a instalar. Es posible instalar todas de forma automática con el comando `pip install -r requirements.txt`.
+3. El archivo `requirements.txt` contiene una lista de dependencias a instalar. Es posible instalar todas de forma automática con el comando `cd libreQDA` `pip install -r requirements.txt`.
 
 ~~Python-docx~~
 -----------
@@ -54,10 +54,12 @@ Antes de poder comenzar es necesario instalar algunas dependencias.
 Configurar y ejecutar
 ---------------------
 1. Crear una base de datos para LibreQDA. El encoding de la base de datos debe ser **UTF-8** para evitar problemas al subir documentos.
+  `mysql -u root -p` para activar mysql como usuario 'root' y solicitar contraseña de usuario
   `CREATE DATABASE libreqda CHARACTER SET utf8 COLLATE utf8_general_ci;`
-2. Copiar el archivo `local_settings.py.template` que se encuentra junto al código a `local_settings.py`.
-3. Abrir el nuevo archivo, `local_settings.py` y editar según sea necesario.
+2. Copiar el archivo `local_settings.py.template` que se encuentra junto al código a `local_settings.py` (en libreQDA/libreqda).
+3. Abrir el nuevo archivo, `local_settings.py` y editar según sea necesario (cambiar 'USER' y 'PASSWORD' por los datos de usuario y contraseña de mysql ).
 4. Crear la base de datos con django: `python manage.py syncdb`.
+   Durante el proceso, se solicitará un nombre de usuario y contraseña, que serán los datos de acceso a tu instalación de libreQDA 
 5. Ejecutar con: `python manage.py runserver`
 
 Actualizar
