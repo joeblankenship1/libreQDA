@@ -6,3 +6,4 @@
 .pydevproject
 .settings/
 local_settings.py
+*.env
