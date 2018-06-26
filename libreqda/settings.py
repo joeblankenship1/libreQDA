@@ -4,7 +4,7 @@
 import os
 
 
-BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -15,7 +15,16 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'libreqda',
+        'USER': 'libreqda_rw',
+        'PASSWORD': 'libreqda',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -75,7 +84,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = ''
+SECRET_KEY = 'randomKey'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -111,7 +120,7 @@ ROOT_URLCONF = 'libreqda.urls'
 WSGI_APPLICATION = 'libreqda.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_PATH, 'templates')
+    os.path.join(BASE_DIR, 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

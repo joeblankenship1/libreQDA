@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 admin.autodiscover()
 
 handler404 = 'libreqda.http_handlers.handle_404'
 
-urlpatterns = patterns('',
+urlpatterns = [
     # admin
     url(r'^admin/', include(admin.site.urls)),
     # about
@@ -46,7 +46,7 @@ urlpatterns = patterns('',
     url(r'^project/(?P<pid>\d+)/document/(?P<did>\d+)/delete/$',
         'libreqda.views.delete_document',
         name='delete_document'),
-    #codes
+    # codes
     url(r'^project/(?P<pid>\d+)/code/$',
         'libreqda.views.browse_codes',
         name='browse_codes'),
@@ -56,7 +56,7 @@ urlpatterns = patterns('',
     url(r'^project/(?P<pid>\d+)/code/(?P<cid>\d+)/delete/$',
         'libreqda.views.delete_code',
         name='delete_code'),
-    #categories
+    # categories
     url(r'^project/(?P<pid>\d+)/category/$',
         'libreqda.views.browse_categories',
         name='browse_categories'),
@@ -66,7 +66,7 @@ urlpatterns = patterns('',
     url(r'^project/(?P<pid>\d+)/category/(?P<cid>\d+)/delete/$',
         'libreqda.views.delete_category',
         name='delete_category'),
-    #annotations
+    # annotations
     url(r'^project/(?P<pid>\d+)/annotation/$',
         'libreqda.views.browse_annotations',
         name='browse_annotations'),
@@ -82,7 +82,7 @@ urlpatterns = patterns('',
     url(r'^project/(?P<pid>\d+)/annotation/(?P<aid>\d+)/code/remove/(?P<cid>\d+)/$',
         'libreqda.views.remove_code_from_annotation',
         name='remove_code_from_annotation'),
-    #citations
+    # citations
     url(r'^project/(?P<pid>\d+)/citation/(?P<cid>.+)/code/assign/$',
         'libreqda.views.add_code_to_citation',
         name='add_code_to_citation'),
@@ -106,7 +106,7 @@ urlpatterns = patterns('',
         'django.contrib.auth.views.logout',
         name='logout',
         kwargs={'next_page': '/accounts/login'}),
-    #queries
+    # queries
     url(r'^project/(?P<pid>\d+)/query/$',
         'libreqda.views.browse_queries',
         name='browse_queries'),
@@ -168,7 +168,7 @@ urlpatterns = patterns('',
     url(r'^project/(?P<pid>\d+)/document/(?P<did>\d+)/annotations/update/(?P<aid>\d+)$',
         'libreqda.annotations_views.update',
         name='annotations_update'),
-)
+]
 
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',

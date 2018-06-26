@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import uuid
-from sets import Set
+try:
+    set
+except NameError:
+    from sets import Set as set
 from itertools import chain
 
 from django.db import models
@@ -12,7 +15,7 @@ from django.contrib.auth.models import User
 
 class Project(models.Model):
     name = models.CharField(max_length=250, blank=False, verbose_name=_("Nombre"))
-    owner = models.ForeignKey(User, related_name='projects')
+    owner = models.ForeignKey(User, related_name='projects', on_delete=models.DO_NOTHING)
     version = models.PositiveIntegerField(default=1)
     comment = models.TextField(null=True, blank=True, verbose_name=_("Comentario"))
     modified_date = models.DateTimeField(auto_now=True)
@@ -45,7 +48,7 @@ class Document(models.Model):
     text = models.TextField(blank=True)
     comment = models.TextField(blank=True, null=True)
     file = models.FileField(upload_to=get_new_document_path)
-    uploaded_by = models.ForeignKey(User)
+    uploaded_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     creation_date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -53,13 +56,13 @@ class Document(models.Model):
 
 
 class DocumentInstance(models.Model):
-    document = models.ForeignKey(Document, related_name='instances')
-    project = models.ForeignKey(Project, related_name='documents')
+    document = models.ForeignKey(Document, related_name='instances', on_delete=models.DO_NOTHING)
+    project = models.ForeignKey(Project, related_name='documents', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=250)
     type = models.CharField(max_length=250)
     comment = models.TextField(blank=True, null=True)
     modified_date = models.DateTimeField(auto_now=True)
-    uploaded_by = models.ForeignKey(User)
+    uploaded_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     creation_date = models.DateTimeField(auto_now_add=True)
     annotations = models.ManyToManyField('Annotation', related_name='documents')
 
@@ -68,10 +71,10 @@ class DocumentInstance(models.Model):
 
 
 class Annotation(models.Model):
-    project = models.ForeignKey(Project, related_name='annotations')
+    project = models.ForeignKey(Project, related_name='annotations', on_delete=models.DO_NOTHING)
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     text = models.TextField()
     codes = models.ManyToManyField('Code',
                                    blank=True,
@@ -83,8 +86,8 @@ class Annotation(models.Model):
 
 class Citation(models.Model):
     # TODO: Document instances are no longer needed, should we remove them ?
-    document = models.ForeignKey(DocumentInstance, related_name='citations')
-    created_by = models.ForeignKey(User)
+    document = models.ForeignKey(DocumentInstance, related_name='citations', on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     comment = models.TextField(null=True, blank=True)
@@ -129,12 +132,12 @@ class Code(models.Model):
                    ('s', _('Green')),
                    ('i', _('Blue')),
                    ('b', _('Black')),)
-    project = models.ForeignKey(Project, related_name='codes')
+    project = models.ForeignKey(Project, related_name='codes', on_delete=models.DO_NOTHING)
     name = models.TextField(max_length=250, verbose_name=_('Nombre'))
     weight = models.IntegerField(validators=[MinValueValidator(-100),
                                              MaxValueValidator(100)],
                                  verbose_name=_('Peso'))
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     color = models.CharField(max_length=1,
                              blank=True,
                              null=True,
@@ -182,9 +185,9 @@ class Category(models.Model):
                              verbose_name=_('Color'))
     creation_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     comment = models.TextField(null=True, blank=True)
-    project = models.ForeignKey(Project, related_name='categories')
+    project = models.ForeignKey(Project, related_name='categories', on_delete=models.DO_NOTHING)
     codes = models.ManyToManyField(Code, related_name='categories')
     citations = models.ManyToManyField(Citation, related_name='categories')
     documents = models.ManyToManyField(Document, related_name='categories')
@@ -195,8 +198,8 @@ class UserProjectPermission(models.Model):
     PROJECT_PERMISSIONS = (('a', _('Administrator')),
                           ('e', _('Editor')),
                           ('g', _('Guest')),)
-    user = models.ForeignKey(User, related_name='permissions')
-    project = models.ForeignKey(Project, related_name='permissions')
+    user = models.ForeignKey(User, related_name='permissions', on_delete=models.DO_NOTHING)
+    project = models.ForeignKey(Project, related_name='permissions', on_delete=models.DO_NOTHING)
     modified_date = models.DateTimeField(auto_now=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     permissions = models.CharField(max_length=1, choices=PROJECT_PERMISSIONS)
@@ -211,7 +214,7 @@ class UserProjectPermission(models.Model):
 class BooleanQuery(models.Model):
     OPERATORS = (('|', _('or')),
                  ('&', _('and')))
-    project = models.ForeignKey(Project, related_name=_('boolean_queries'))
+    project = models.ForeignKey(Project, related_name=_('boolean_queries'), on_delete=models.DO_NOTHING)
     codes = models.ManyToManyField(Code,
                                    related_name='boolean_queries',
                                    verbose_name=_(u'Códigos'))
@@ -253,10 +256,10 @@ class BooleanQuery(models.Model):
 class SemanticQuery(models.Model):
     OPERATORS = (('u', _('up')),
                  ('d', _('down')),)
-    project = models.ForeignKey(Project, related_name=_('semantic_queries'))
+    project = models.ForeignKey(Project, related_name=_('semantic_queries'), on_delete=models.DO_NOTHING)
     code = models.ForeignKey(Code,
                              related_name='semantic_operand',
-                             verbose_name=_(u'Código'))
+                             verbose_name=_(u'Código'), on_delete=models.DO_NOTHING)
     operator = models.CharField(max_length=1,
                                 choices=OPERATORS,
                                 verbose_name=_('Operador'))
@@ -304,13 +307,13 @@ class SemanticQuery(models.Model):
 
 class ProximityQuery(models.Model):
     OPERATORS = (('c', _('coocurrencia')),)
-    project = models.ForeignKey(Project, related_name=_('proximity_queries'))
+    project = models.ForeignKey(Project, related_name='proximity_queries', on_delete=models.DO_NOTHING)
     code1 = models.ForeignKey(Code,
                               related_name='proximity_operand1',
-                              verbose_name=_(u'Código 1'))
+                              verbose_name=_(u'Código 1'), on_delete=models.DO_NOTHING)
     code2 = models.ForeignKey(Code,
                               related_name='proximity_operand2',
-                              verbose_name=_(u'Código 2'))
+                              verbose_name=_(u'Código 2'), on_delete=models.DO_NOTHING)
     operator = models.CharField(max_length=1,
                                 choices=OPERATORS,
                                 verbose_name=_('Operador'))
@@ -344,7 +347,7 @@ class ProximityQuery(models.Model):
 class SetQuery(models.Model):
     OPERATORS = (('+', _('union')),
                  ('^', _('intersection')))
-    project = models.ForeignKey(Project, related_name=_('set_queries'))
+    project = models.ForeignKey(Project, related_name=_('set_queries'), on_delete=models.DO_NOTHING)
     boolean_queries = models.ManyToManyField(BooleanQuery,
                                              blank=True,
                                              related_name='containing_queries',
@@ -352,7 +355,7 @@ class SetQuery(models.Model):
     proximity_queries = models.ManyToManyField(ProximityQuery,
                                                blank=True,
                                                related_name='containing_queries',
-                                               verbose_name=_('Consultas de proximidad'))
+                                               verbose_name=_('Consultas proximidad'))
     semantic_queries = models.ManyToManyField(SemanticQuery,
                                               blank=True,
                                               related_name='containing_queries',

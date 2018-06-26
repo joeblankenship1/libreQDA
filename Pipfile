@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==1.8"
+"psycopg2" = "*"
+pillow = "*"
+argparse = "*"
+django-rosetta = "*"
+docx-dev = {git = "https://github.com/mikemaccana/python-docx.git", editable = true, ref = "0c4379c6b89a7c745890e940a9be88b04147dfc2"}
+"html5lib" = "*"
+ipython = "*"
+lxml = "*"
+pisa = "*"
+pyth = "*"
+python-dateutil = "*"
+reportlab = "*"
+six = "*"
+"bs4" = "*"
+django-model-report = "==0.1.4"
+"pdfminer.six" = "*"
+sets = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"
